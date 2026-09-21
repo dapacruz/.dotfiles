@@ -1,43 +1,35 @@
+-- ~/.config/nvim/lua/user/plugins/treesitter.lua
 return {
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    dependencies = {
-        "nvim-treesitter/nvim-treesitter-context",
-        "nvim-treesitter/nvim-treesitter-textobjects",
-    },
-    lazy = true,
-    event = { "BufReadPre", "BufNewFile" },
-    config = function()
-        local configs = require("nvim-treesitter.configs")
+  "nvim-treesitter/nvim-treesitter",
+  branch = "main",
+  build = ":TSUpdate",
+  lazy = false, -- see note below about lazy-loading
+  config = function()
+    require("nvim-treesitter").setup({
+      install_dir = vim.fn.stdpath("data") .. "/site",
+    })
 
-        configs.setup({
-            ensure_installed = "yaml", -- one of "all" or a list of languages
-            ignore_install = { "phpdoc" }, -- List of parsers to ignore installing
-            highlight = {
-                enable = true, -- false will disable the whole extension
-                disable = { "xml" }, -- list of language that will be disabled; disabled XML due to hang on opening a doc
-            },
-            incremental_selection = {
-                enable = true,
-                keymaps = {
-                    init_selection = "<M-space>",
-                    node_incremental = "<M-space>",
-                    scope_incremental = false,
-                    node_decremental = "<bs>",
-                },
-            },
-            autopairs = {
-                enable = true,
-            },
-            indent = { enable = true, disable = { } },
-            rainbow = {
-                enable = true,
-                -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
-                extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-                max_file_lines = nil, -- Do not enable for files with more than n lines, int
-                -- colors = {}, -- table of hex strings
-                -- termcolors = {} -- table of colour name strings
-            },
-        })
-    end
+    -- Explicit parser list. Add or remove to taste; :TSInstall <lang>
+    -- also works at runtime. This call is idempotent.
+    require("nvim-treesitter").install({
+      "yaml",
+      -- basics for your own config + render-markdown:
+      "lua", "vim", "vimdoc", "query",
+      "markdown", "markdown_inline",
+    })
+
+    -- Start highlighting + indent per buffer. Replaces the old
+    -- highlight = { enable = true } / indent = { enable = true } modules.
+    vim.api.nvim_create_autocmd("FileType", {
+      callback = function(args)
+        local ft = vim.bo[args.buf].filetype
+        if ft == "" or ft == "xml" then return end -- your original disable
+        local lang = vim.treesitter.language.get_lang(ft) or ft
+        if pcall(vim.treesitter.start, args.buf, lang) then
+          vim.bo[args.buf].indentexpr =
+            "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
+      end,
+    })
+  end,
 }
