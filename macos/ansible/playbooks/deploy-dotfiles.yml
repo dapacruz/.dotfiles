@@ -187,6 +187,8 @@
           - telnet
           - the_silver_searcher
           - tmux
+          - tree-sitter
+          - tree-sitter-cli
           - toilet
           - tokei
           - trash
