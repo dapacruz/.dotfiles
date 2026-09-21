@@ -29,5 +29,3 @@
 	branch = false
 [init]
 	defaultBranch = main
-[credential]
-	helper = /usr/share/git/credential/libsecret/git-credential-libsecret
