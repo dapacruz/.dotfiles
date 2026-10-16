@@ -25,9 +25,6 @@ return {
         -- dapui.close()
         -- end
 
-        -- Enable the use of VS Code style launch.json files
-        require('dap.ext.vscode').load_launchjs('.nvim/launch.json', {})
-
         vim.fn.sign_define('DapBreakpoint',{ text ='🔴', texthl ='', linehl ='', numhl =''})
         vim.fn.sign_define('DapStopped',{ text ='⇨', texthl ='', linehl ='', numhl =''})
 
