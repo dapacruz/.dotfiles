@@ -297,3 +297,5 @@ export PATH="$PATH:/Users/dacruz/.lmstudio/bin"
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
+
+. "$HOME/.local/bin/env"
