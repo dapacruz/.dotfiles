@@ -42,6 +42,7 @@ return {
         opts = {
             ensure_installed = {
                 "ansible-lint",
+                "tree-sitter-cli",
             },
         },
         dependencies = {
