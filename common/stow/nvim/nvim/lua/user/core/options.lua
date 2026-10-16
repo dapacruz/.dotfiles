@@ -1,6 +1,7 @@
 vim.opt.backup = false
 vim.opt.bs = "2" -- Make backspace behave like normal again
-vim.opt.clipboard:append("unnamedplus")
+vim.opt.clipboard = "unnamedplus"
+vim.g.clipboard = "osc52"
 vim.opt.cmdheight = 1 --  Give more space for displaying messages
 vim.opt.cursorcolumn = false
 vim.opt.cursorline = true -- Cursor highlighting
