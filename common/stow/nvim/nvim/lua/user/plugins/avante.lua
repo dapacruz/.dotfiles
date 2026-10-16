@@ -10,6 +10,8 @@ return {
     build = "make",
     -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
     dependencies = {
+        "ColinKennedy/mega.cmdparse",
+        "ColinKennedy/mega.logging",
         "stevearc/dressing.nvim",
         "nvim-lua/plenary.nvim",
         "MunifTanjim/nui.nvim",
