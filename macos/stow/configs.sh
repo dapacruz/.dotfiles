@@ -19,4 +19,5 @@ common_configs=(
     "$HOME/.config/nvim"
     "$HOME/.config/starship.toml"
     "$HOME/.config/tmux"
+    "$HOME/.pi/agent"
 )
