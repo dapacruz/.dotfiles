@@ -15,6 +15,7 @@
           - build-essential
           - curl
           - cargo
+          - python3-venv
         state: present
         update_cache: yes
       become: true
@@ -137,6 +138,24 @@
           - zoxide
           - zsh-vi-mode
           - zsh-syntax-highlighting
+
+    - name: Create Pi agent config directory
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.pi"
+        state: directory
+        mode: "0700"
+      become: false
+
+    - name: Install Pi coding agent
+      community.general.npm:
+        name: "@earendil-works/pi-coding-agent"
+        global: true
+        state: present
+        ignore_scripts: true
+        executable: /home/linuxbrew/.linuxbrew/bin/npm
+      environment:
+        PATH: "/home/linuxbrew/.linuxbrew/bin:{{ ansible_env.PATH }}"
+      become: false
 
     - name: Check if Python venv dir exists
       ansible.builtin.stat:
