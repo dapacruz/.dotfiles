@@ -23,6 +23,10 @@ export HISTCONTROL=ignorespace
 export HISTSIZE=100000
 export SAVEHIST=100000
 export VI_MODE_SET_CURSOR=true
+# Ensure ZLE and prompt modules use UTF-8 character-width rules.
+export LANG=C.UTF-8
+export LC_CTYPE=C.UTF-8
+unset LC_ALL
 
 
 # # Zsh options
