@@ -63,7 +63,7 @@
         - name: Run Homebrew installation script
           ansible.builtin.shell: CI=1 /tmp/install_homebrew.sh
           args:
-            executable: /bin/bash
+            executable: /usr/bin/bash
           become: false
           register: homebrew_result
           failed_when: "'FAILED' in homebrew_result.stderr"
@@ -149,24 +149,6 @@
       environment:
         PATH: "/home/linuxbrew/.linuxbrew/bin:{{ ansible_env.PATH }}"
       become: false
-
-    - name: Install Claude Code agent
-      block:
-        - name: Download Claude Code installation script
-          get_url:
-            url: https://claude.ai/install.sh
-            dest: /tmp/install_claude_code.sh
-            mode: '0755'
-          become: false
-
-        - name: Run Claude Code installation script
-          ansible.builtin.shell: /tmp/install_claude_code.sh
-          args:
-            executable: /bin/bash
-          become: false
-          register: claude_code_result
-          failed_when: "'FAILED' in claude_code_result.stderr"
-
     - name: Check if Python venv dir exists
       ansible.builtin.stat:
         path: ~/venv
@@ -182,7 +164,7 @@
         - name: Create Python venv
           ansible.builtin.shell: python3.13 -m venv ~/venv/3.13
           args:
-            executable: /bin/bash
+            executable: /usr/bin/bash
           register: python_result
           failed_when: "'FAILED' in python_result.stderr"
           become: false
@@ -192,6 +174,21 @@
       ansible.builtin.shell:
         cmd: ~/dotfiles/devcontainer/stow/stow.sh
         chdir: ~/dotfiles/devcontainer/stow
+
+    - name: Install Claude Code agent
+      become: false
+      block:
+        - name: Download Claude Code installation script
+          ansible.builtin.get_url:
+            url: https://claude.ai/install.sh
+            dest: /tmp/install_claude_code.sh
+            mode: '0755'
+
+        - name: Run Claude Code installation script
+          ansible.builtin.command:
+            cmd: /usr/bin/bash /tmp/install_claude_code.sh
+            creates: "{{ ansible_facts['user_dir'] }}/.local/bin/claude"
+          register: claude_code_result
 
     - name: Clone Tmux TPM repository
       ansible.builtin.git:
