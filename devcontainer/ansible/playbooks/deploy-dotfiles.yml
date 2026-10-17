@@ -150,6 +150,23 @@
         PATH: "/home/linuxbrew/.linuxbrew/bin:{{ ansible_env.PATH }}"
       become: false
 
+    - name: Install Claude Code agent
+      block:
+        - name: Download Claude Code installation script
+          get_url:
+            url: https://claude.ai/install.sh
+            dest: /tmp/install_claude_code.sh
+            mode: '0755'
+          become: false
+
+        - name: Run Claude Code installation script
+          ansible.builtin.shell: /tmp/install_claude_code.sh
+          args:
+            executable: /bin/bash
+          become: false
+          register: claude_code_result
+          failed_when: "'FAILED' in claude_code_result.stderr"
+
     - name: Check if Python venv dir exists
       ansible.builtin.stat:
         path: ~/venv
