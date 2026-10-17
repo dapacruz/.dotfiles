@@ -139,13 +139,6 @@
           - zsh-vi-mode
           - zsh-syntax-highlighting
 
-    - name: Create Pi agent config directory
-      ansible.builtin.file:
-        path: "{{ ansible_env.HOME }}/.pi"
-        state: directory
-        mode: "0700"
-      become: false
-
     - name: Install Pi coding agent
       community.general.npm:
         name: "@earendil-works/pi-coding-agent"
