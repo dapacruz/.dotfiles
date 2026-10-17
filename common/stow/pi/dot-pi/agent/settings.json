@@ -1,0 +1,21 @@
+{
+  "lastChangelogVersion": "1.3.0",
+  "defaultProvider": "ollama-cloud",
+  "defaultModel": "glm-5.3-flash",
+  "packages": [
+    "npm:pi-web-access"
+  ],
+  "deviceId": "a8ff5666-2f8f-4898-9cec-9ac371dd594f",
+  "enabledModels": [
+    "openai/gpt-6-astra",
+    "openai/gpt-6.1-sol",
+    "openai/o3-pro",
+    "openai/o4-mini",
+    "ollama-local/qwen3.8:27b-mlx",
+    "ollama-cloud/glm-5.3",
+    "ollama-cloud/glm-5.3-flash",
+    "omlx/Qwen3-Coder-30B-A3B-Instruct-MLX-5bit",
+    "ollama-cloud/deepseek-v4-pro",
+    "ollama-cloud/deepseek-v4.1-flash"
+  ]
+}
