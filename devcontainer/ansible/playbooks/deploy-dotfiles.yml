@@ -4,6 +4,17 @@
   gather_facts: true
 
   tasks:
+    - name: Stow dotfiles
+      ansible.builtin.command:
+        cmd: ./stow.sh
+        chdir: "{{ ansible_facts['user_dir'] }}/dotfiles/devcontainer/stow"
+      become: false
+      register: stow_result
+      changed_when: >-
+        'LINK:' in stow_result.stderr
+        or 'Renaming' in stow_result.stdout
+        or 'Copying' in stow_result.stdout
+
     - name: Install Ansible Galaxy community.general collection
       command: ansible-galaxy collection install community.general
       register: result
@@ -40,7 +51,7 @@
           become: false
 
         - name: Run Oh My Zsh installation script
-          command: sh /tmp/install_ohmyzsh.sh --unattended
+          command: sh /tmp/install_ohmyzsh.sh --unattended --keep-zshrc
           become: false
           register: ohmyzsh_result
           failed_when: "'FAILED' in ohmyzsh_result.stderr"
@@ -67,13 +78,6 @@
           become: false
           register: homebrew_result
           failed_when: "'FAILED' in homebrew_result.stderr"
-
-        - name: Update .zshrc
-          ansible.builtin.lineinfile:
-            path: /home/{{ ansible_user_id }}/.zshrc
-            line: |
-
-              eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
       when: not homebrew.stat.exists
 
     - name: Update Homebrew
@@ -154,6 +158,21 @@
         path: ~/venv
       register: venv
 
+    - name: Install Claude Code agent
+      become: false
+      block:
+        - name: Download Claude Code installation script
+          ansible.builtin.get_url:
+            url: https://claude.ai/install.sh
+            dest: /tmp/install_claude_code.sh
+            mode: '0755'
+
+        - name: Run Claude Code installation script
+          ansible.builtin.command:
+            cmd: /usr/bin/bash /tmp/install_claude_code.sh
+            creates: "{{ ansible_facts['user_dir'] }}/.local/bin/claude"
+          register: claude_code_result
+
     - name: Create Python venv
       block:
         - name: Create Python venv dir
@@ -169,26 +188,6 @@
           failed_when: "'FAILED' in python_result.stderr"
           become: false
       when: not venv.stat.exists
-
-    - name: Stow dotfiles
-      ansible.builtin.shell:
-        cmd: ~/dotfiles/devcontainer/stow/stow.sh
-        chdir: ~/dotfiles/devcontainer/stow
-
-    - name: Install Claude Code agent
-      become: false
-      block:
-        - name: Download Claude Code installation script
-          ansible.builtin.get_url:
-            url: https://claude.ai/install.sh
-            dest: /tmp/install_claude_code.sh
-            mode: '0755'
-
-        - name: Run Claude Code installation script
-          ansible.builtin.command:
-            cmd: /usr/bin/bash /tmp/install_claude_code.sh
-            creates: "{{ ansible_facts['user_dir'] }}/.local/bin/claude"
-          register: claude_code_result
 
     - name: Clone Tmux TPM repository
       ansible.builtin.git:
